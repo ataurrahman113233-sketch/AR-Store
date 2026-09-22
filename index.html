@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#5B4BFF">
+<title>AR Store — Discover • Download • Enjoy</title>
+<meta name="description" content="AR Store is an independent Android application marketplace.">
+<meta name="author" content="Ataur Rahman">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%235B4BFF'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial' font-size='24' font-weight='800' fill='white'%3EAR%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['"Plus Jakarta Sans"','system-ui']},colors:{brand:{500:'#5B4BFF',600:'#4938ef'},accent:{500:'#00D4B8'}}}}}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+html,body{-webkit-tap-highlight-color:transparent}body{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
+.fade{animation:fade .22s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.card{transition:.2s}.card:hover{transform:translateY(-2px)}
+.safe{padding-bottom:env(safe-area-inset-bottom)}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#0b0f1c] dark:text-slate-100">
+<header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-[#0b0f1c]/90">
+  <div class="max-w-7xl mx-auto px-3 sm:px-5">
+    <div class="h-16 flex items-center gap-2">
+      <a href="#/" class="flex items-center gap-2 shrink-0">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 grid place-items-center text-white font-extrabold">AR</div>
+        <span class="font-extrabold text-lg">AR Store</span>
+      </a>
+      <form id="searchForm" class="hidden md:flex flex-1 max-w-2xl mx-auto">
+        <div class="relative w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input id="search" class="w-full pl-11 pr-4 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" placeholder="Search apps, games and developers">
+        </div>
+      </form>
+      <button id="theme" class="w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fa-solid fa-moon"></i></button>
+      <button id="loginTop" class="px-3 py-2 rounded-full bg-brand-500 text-white text-sm font-bold">Sign in</button>
+      <a id="accountTop" href="#/account" class="hidden w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-brand-500 to-accent-500 text-white place-items-center font-bold"></a>
+    </div>
+    <div class="md:hidden pb-3">
+      <form id="mobileSearch"><input id="msearch" class="w-full px-4 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 outline-none" placeholder="Search apps, games and developers"></form>
+    </div>
+    <nav class="hidden md:flex gap-1 pb-2 overflow-x-auto no-scrollbar text-sm font-semibold">
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/">Home</a>
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/apps">Apps</a>
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/games">Games</a>
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/categories">Categories</a>
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/downloads">Downloads</a>
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/developer">Developer</a>
+      <a class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#/about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="view" class="max-w-7xl mx-auto px-3 sm:px-5 pt-5 pb-28 md:pb-12 min-h-[70vh]"></main>
+
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-40 safe border-t border-slate-200 bg-white/95 backdrop-blur-xl dark:border-slate-800 dark:bg-[#0b0f1c]/95">
+  <div class="grid grid-cols-5">
+    <a href="#/" class="py-3 text-center text-xs"><i class="fa-solid fa-house block text-base mb-1"></i>Home</a>
+    <a href="#/apps" class="py-3 text-center text-xs"><i class="fa-solid fa-layer-group block text-base mb-1"></i>Apps</a>
+    <a href="#/categories" class="py-3 text-center text-xs"><i class="fa-solid fa-grip block text-base mb-1"></i>Categories</a>
+    <a href="#/downloads" class="py-3 text-center text-xs"><i class="fa-solid fa-download block text-base mb-1"></i>Downloads</a>
+    <a href="#/account" class="py-3 text-center text-xs"><i class="fa-solid fa-user block text-base mb-1"></i>Account</a>
+  </div>
+</nav>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,doc,getDoc,getDocs,setDoc,addDoc,query,where,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCSq2eKNl06GyExgA6_0tXgUYQrud2ZxMc",
+  authDomain:"ar-store-ark-7.firebaseapp.com",
+  projectId:"ar-store-ark-7",
+  storageBucket:"ar-store-ark-7.firebasestorage.app",
+  messagingSenderId:"424495866748",
+  appId:"1:424495866748:web:a17fd0256342c217153af9"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const provider=new GoogleAuthProvider();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const iconFor=id=>(DEFAULT_CATEGORIES.find(x=>x.id===id)||{icon:'fa-cube'}).icon;
+const DEFAULT_CATEGORIES=[
+{id:'games',name:'Games',icon:'fa-gamepad'},{id:'education',name:'Education',icon:'fa-graduation-cap'},
+{id:'tools',name:'Tools',icon:'fa-screwdriver-wrench'},{id:'social',name:'Social',icon:'fa-users'},
+{id:'entertainment',name:'Entertainment',icon:'fa-clapperboard'},{id:'business',name:'Business',icon:'fa-briefcase'},
+{id:'productivity',name:'Productivity',icon:'fa-list-check'},{id:'photography',name:'Photography',icon:'fa-camera'},
+{id:'music',name:'Music & Audio',icon:'fa-music'},{id:'video',name:'Video Players',icon:'fa-play'},
+{id:'communication',name:'Communication',icon:'fa-comment-dots'},{id:'health',name:'Health & Fitness',icon:'fa-heart-pulse'},
+{id:'lifestyle',name:'Lifestyle',icon:'fa-mug-hot'},{id:'news',name:'News',icon:'fa-newspaper'},
+{id:'travel',name:'Travel',icon:'fa-plane'},{id:'finance',name:'Finance',icon:'fa-wallet'},
+{id:'utilities',name:'Utilities',icon:'fa-wrench'},{id:'other',name:'Other',icon:'fa-cube'}];
+let user=null,profile=null,apps=[],categories=DEFAULT_CATEGORIES;
+
+function toast(icon,title){Swal.fire({toast:true,position:'top-end',showConfirmButton:false,timer:2400,icon,title});}
+function err(e){toast('error',e?.message?.slice(0,120)||'Something went wrong');}
+function img(url,name){
+  return url?`<img src="${esc(url)}" alt="${esc(name)}" class="w-full h-full object-cover" onerror="this.style.display='none'">`
+  :`<div class="w-full h-full grid place-items-center bg-gradient-to-br from-brand-500 to-accent-500 text-white text-2xl font-extrabold">${esc((name||'AR').slice(0,2).toUpperCase())}</div>`;
+}
+function card(a){
+ return `<article class="card rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+   <div class="flex gap-3">
+    <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden">${img(a.iconUrl,a.name)}</div>
+    <div class="min-w-0 flex-1">
+      <a href="#/app/${encodeURIComponent(a.id)}" class="font-bold hover:text-brand-500 line-clamp-1">${esc(a.name)}</a>
+      <p class="text-xs text-slate-500 mt-1">${esc(a.developerName||'Independent developer')}</p>
+      <p class="text-xs mt-2"><i class="fa-solid fa-star text-amber-400"></i> ${Number(a.rating||0).toFixed(1)} · ${Number(a.downloadCount||0).toLocaleString()} downloads</p>
+    </div>
+   </div>
+   <p class="text-sm text-slate-500 dark:text-slate-400 mt-3 line-clamp-2">${esc(a.shortDescription||'Android application available on AR Store.')}</p>
+ </article>`;
+}
+async function loadCategories(){
+ try{
+  const s=await getDocs(collection(db,'categories'));
+  if(!s.empty) categories=s.docs.map(d=>({id:d.id,...d.data()}));
+ }catch(e){}
+}
+async function loadApps(){
+ try{
+  const q=query(collection(db,'apps'),where('status','==','approved'),limit(100));
+  const s=await getDocs(q); apps=s.docs.map(d=>({id:d.id,...d.data()}));
+ }catch(e){apps=[];console.error(e)}
+}
+async function ensureProfile(u){
+ const ref=doc(db,'users',u.uid),snap=await getDoc(ref);
+ if(!snap.exists()){
+  profile={uid:u.uid,displayName:u.displayName||'AR Store User',email:u.email||'',photoURL:u.photoURL||'',createdAt:serverTimestamp()};
+  await setDoc(ref,profile);
+ }else profile={uid:u.uid,...snap.data()};
+}
+function setAuthUI(){
+ const b=$('#loginTop'),a=$('#accountTop');
+ if(user){
+  b.classList.add('hidden');a.classList.remove('hidden');a.classList.add('grid');
+  a.textContent=(user.displayName||user.email||'U').slice(0,1).toUpperCase();
+ }else{
+  b.classList.remove('hidden');a.classList.add('hidden');a.classList.remove('grid');
+ }
+}
+async function login(){
+ try{await signInWithPopup(auth,provider);toast('success','Signed in successfully');}
+ catch(e){err(e)}
+}
+async function requireLogin(){
+ if(user)return true;
+ const r=await Swal.fire({icon:'info',title:'Sign in required',text:'Please sign in with Google to continue.',showCancelButton:true,confirmButtonText:'Sign in'});
+ if(r.isConfirmed) await login();
+ return !!user;
+}
+function home(){
+ const featured=apps.filter(a=>a.featured).slice(0,6), list=(featured.length?featured:apps).slice(0,8);
+ $('#view').innerHTML=`<div class="fade">
+  <section class="rounded-3xl p-6 sm:p-10 bg-gradient-to-br from-brand-600 to-[#00a995] text-white shadow-lg">
+   <p class="font-bold text-sm opacity-90">AR Store</p>
+   <h1 class="text-3xl sm:text-5xl font-extrabold mt-2">Discover • Download • Enjoy</h1>
+   <p class="mt-3 max-w-2xl text-white/85">Discover Android apps and games from independent developers. Download only apps you trust and are authorized to use.</p>
+   <a href="#/apps" class="inline-flex mt-6 px-5 py-3 rounded-xl bg-white text-brand-600 font-bold">Explore Apps</a>
+  </section>
+  <div class="flex items-center justify-between mt-8 mb-3"><h2 class="text-xl font-extrabold">Popular Apps</h2><a href="#/apps" class="text-brand-500 text-sm font-bold">View all</a></div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">${list.length?list.map(card).join(''):empty('No approved apps yet.','Approved applications will appear here.')}</div>
+  <div class="flex items-center justify-between mt-8 mb-3"><h2 class="text-xl font-extrabold">Categories</h2><a href="#/categories" class="text-brand-500 text-sm font-bold">View all</a></div>
+  <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">${categories.slice(0,10).map(c=>`<a href="#/category/${c.id}" class="shrink-0 px-4 py-3 rounded-2xl bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800"><i class="fa-solid ${iconFor(c.id)} text-brand-500 mr-2"></i>${esc(c.name)}</a>`).join('')}</div>
+ </div>`;
+}
+function empty(title,text=''){return `<div class="sm:col-span-2 lg:col-span-4 text-center py-16 text-slate-500"><i class="fa-solid fa-box-open text-4xl mb-4"></i><h3 class="font-bold text-lg">${esc(title)}</h3><p class="text-sm mt-1">${esc(text)}</p></div>`}
+function appList(title,data=apps){
+ $('#view').innerHTML=`<div class="fade"><div class="flex items-center justify-between mb-5"><h1 class="text-2xl font-extrabold">${esc(title)}</h1><span class="text-sm text-slate-500">${data.length} apps</span></div><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">${data.length?data.map(card).join(''):empty('No apps found','Try another category or search.')}</div></div>`;
+}
+function categoriesPage(){
+ $('#view').innerHTML=`<div class="fade"><h1 class="text-2xl font-extrabold mb-5">Categories</h1><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">${categories.map(c=>`<a href="#/category/${c.id}" class="rounded-2xl p-5 bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800 hover:border-brand-500"><div class="w-11 h-11 rounded-xl bg-brand-50 dark:bg-brand-500/15 text-brand-500 grid place-items-center mb-3"><i class="fa-solid ${iconFor(c.id)}"></i></div><b>${esc(c.name)}</b><p class="text-xs text-slate-500 mt-1">${apps.filter(a=>a.categoryId===c.id).length} apps</p></a>`).join('')}</div></div>`;
+}
+function appDetail(id){
+ const a=apps.find(x=>x.id===id);
+ if(!a){$('#view').innerHTML=empty('App not found','This app may not be approved or may have been removed.');return}
+ $('#view').innerHTML=`<div class="fade max-w-4xl mx-auto">
+ <button onclick="history.back()" class="text-sm font-bold text-brand-500 mb-4"><i class="fa-solid fa-arrow-left mr-2"></i>Back</button>
+ <section class="rounded-3xl bg-white border border-slate-200 p-5 sm:p-8 dark:bg-slate-900 dark:border-slate-800">
+  <div class="flex flex-col sm:flex-row gap-5">
+   <div class="w-28 h-28 rounded-3xl overflow-hidden shrink-0">${img(a.iconUrl,a.name)}</div>
+   <div class="flex-1"><h1 class="text-2xl sm:text-3xl font-extrabold">${esc(a.name)}</h1><p class="text-slate-500 mt-1">${esc(a.developerName||'Independent developer')}</p>
+    <div class="flex flex-wrap gap-2 mt-3 text-sm"><span>⭐ ${Number(a.rating||0).toFixed(1)}</span><span>• ${Number(a.ratingCount||0)} ratings</span><span>• ${Number(a.downloadCount||0).toLocaleString()} downloads</span></div>
+    <button id="downloadBtn" class="mt-5 px-6 py-3 rounded-xl bg-brand-500 text-white font-bold"><i class="fa-solid fa-download mr-2"></i>Download APK</button>
+   </div>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-7 text-sm"><div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><b>Version</b><br>${esc(a.version||'—')}</div><div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><b>Size</b><br>${esc(a.size||'—')}</div><div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><b>Android</b><br>${esc(a.minimumAndroid||'—')}</div><div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><b>Category</b><br>${esc(a.categoryName||'—')}</div></div>
+  <h2 class="text-xl font-extrabold mt-8 mb-2">About</h2><p class="text-slate-600 dark:text-slate-300 whitespace-pre-line">${esc(a.description||a.shortDescription||'No description available.')}</p>
+  <h2 class="text-xl font-extrabold mt-8 mb-3">Reviews</h2><div id="reviews" class="space-y-3"><p class="text-sm text-slate-500">Loading reviews…</p></div>
+  <button id="reviewBtn" class="mt-4 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold">Write a review</button>
+  <button id="reportBtn" class="mt-4 ml-2 px-4 py-2 rounded-xl border border-rose-300 text-rose-500 font-bold">Report</button>
+ </section></div>`;
+ $('#downloadBtn').onclick=()=>downloadApp(a);
+ $('#reviewBtn').onclick=()=>reviewApp(a);
+ $('#reportBtn').onclick=()=>reportApp(a);
+ loadReviews(a.id);
+}
+async function loadReviews(appId){
+ const box=$('#reviews');if(!box)return;
+ try{
+  const s=await getDocs(query(collection(db,'reviews'),where('appId','==',appId),limit(20)));
+  box.innerHTML=s.empty?'<p class="text-sm text-slate-500">No reviews yet.</p>':s.docs.map(d=>{const x=d.data();return `<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800"><b>${esc(x.userName||'AR Store User')}</b><span class="ml-2 text-amber-400">${'★'.repeat(Math.max(0,Math.min(5,Number(x.rating)||0)))}</span><p class="text-sm mt-1">${esc(x.comment||'')}</p></div>`}).join('');
+ }catch(e){box.innerHTML='<p class="text-sm text-slate-500">Reviews are temporarily unavailable.</p>'}
+}
+async function reviewApp(a){
+ if(!await requireLogin())return;
+ const r=await Swal.fire({title:'Write a review',html:`<select id="rr" class="swal2-input"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select><textarea id="rc" class="swal2-textarea" placeholder="Your review"></textarea>`,showCancelButton:true,confirmButtonText:'Post'});
+ if(!r.isConfirmed)return;
+ const rating=Number($('#rr').value),comment=$('#rc').value.trim();if(!comment)return toast('warning','Please write a review.');
+ try{await addDoc(collection(db,'reviews'),{appId:a.id,userId:user.uid,userName:user.displayName||'AR Store User',rating,comment,createdAt:serverTimestamp()});toast('success','Review posted');loadReviews(a.id)}catch(e){err(e)}
+}
+async function reportApp(a){
+ if(!await requireLogin())return;
+ const r=await Swal.fire({title:'Report app',input:'select',inputOptions:{'Malware/Security Concern':'Malware/Security Concern','Fake App':'Fake App','Copyright Concern':'Copyright Concern','Misleading Information':'Misleading Information','Broken Download':'Broken Download','Other':'Other'},inputPlaceholder:'Choose a reason',showCancelButton:true,confirmButtonText:'Submit'});
+ if(!r.isConfirmed||!r.value)return;
+ try{await addDoc(collection(db,'reports'),{appId:a.id,userId:user.uid,reason:r.value,status:'open',createdAt:serverTimestamp()});toast('success','Report submitted')}catch(e){err(e)}
+}
+async function downloadApp(a){
+ if(!await requireLogin())return;
+ if(!a.apkUrl){Swal.fire({icon:'info',title:'APK not available yet',text:'This app has no authorized APK download URL yet. An administrator/developer must publish the download before it can be downloaded.'});return}
+ try{await addDoc(collection(db,'downloads'),{appId:a.id,userId:user.uid,appName:a.name,version:a.version||'',createdAt:serverTimestamp()});location.href=a.apkUrl}catch(e){err(e)}
+}
+function account(){
+ if(!user){$('#view').innerHTML=`<div class="max-w-lg mx-auto text-center py-16"><div class="w-20 h-20 mx-auto rounded-full bg-brand-500 text-white grid place-items-center text-3xl"><i class="fa-solid fa-user"></i></div><h1 class="text-2xl font-extrabold mt-5">Your Account</h1><p class="text-slate-500 mt-2">Sign in with Google to access your account.</p><button id="accountLogin" class="mt-5 px-6 py-3 rounded-xl bg-brand-500 text-white font-bold">Sign in with Google</button></div>`;$('#accountLogin').onclick=login;return}
+ $('#view').innerHTML=`<div class="max-w-xl mx-auto fade"><h1 class="text-2xl font-extrabold mb-5">Account</h1><div class="rounded-3xl bg-white border border-slate-200 p-6 dark:bg-slate-900 dark:border-slate-800"><div class="flex items-center gap-4"><img src="${esc(user.photoURL||'')}" class="w-16 h-16 rounded-full bg-slate-200 object-cover" onerror="this.style.display='none'"><div><h2 class="font-extrabold text-lg">${esc(user.displayName||'AR Store User')}</h2><p class="text-sm text-slate-500">${esc(user.email||'')}</p></div></div><hr class="my-6 border-slate-200 dark:border-slate-800"><a href="#/downloads" class="block py-3 font-semibold"><i class="fa-solid fa-download w-6"></i> My Downloads</a><a href="#/developer" class="block py-3 font-semibold"><i class="fa-solid fa-code w-6"></i> Developer Portal</a><button id="logout" class="w-full mt-5 py-3 rounded-xl border border-rose-300 text-rose-500 font-bold">Sign out</button></div></div>`;
+ $('#logou
